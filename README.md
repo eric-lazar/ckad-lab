@@ -20,4 +20,6 @@
 
 Using Rancher Desktop
 
-- Note you can't have Docker Desktop and Rancher Desktop running at the same time.
+- Note you can't have Docker Desktop and Rancher Desktop running at the same time.  If you had Docker Desktop running before Rancher Desktop, you might need to delete your .kube/config file.
+
+
