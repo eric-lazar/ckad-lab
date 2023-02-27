@@ -5,7 +5,7 @@
 ## Study Guide Breakdown - Domains and Comptenencies*
 *as of 2023-02-27
 
-### 1: [Application Design and Build](DC1-AppDesgnAndBuild.md)
+### 1: [Application Design and Build](DC1-AppDesignAndBuild.md)
 
 ### 2: [Application Deployment](DC2-AppDeployment.md)
 
@@ -13,7 +13,7 @@
 
 ### 4: [Application Environment, Configuration and Security](DC4-AppEnvConfigSecurity.md)
 
-### Curriculum 5: [Services and Networking](DC5-ServicesAndNetworking.md)
+### 5: [Services and Networking](DC5-ServicesAndNetworking.md)
 
 
 ## Home Lab Setup
