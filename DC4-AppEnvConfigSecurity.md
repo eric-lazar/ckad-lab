@@ -6,6 +6,22 @@
 
 ## Understanding and defining resource requirements, limits and quotas
 
+```
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: hello-world-quota
+spec:
+  hard:
+    pods: 2
+    request.cpu: "1"
+    requests.memory: 1024m
+    limits.cpu: "4"
+    limits.memory: 4096m
+    
+```
+
+
 ## Understand ConfigMaps
 
 ### Create ConfigMaps
@@ -182,4 +198,49 @@ spec:
 ## Understand ServiceAccounts
 
 ## Understand SecurityContexts
+
+By default, containers run with root privileges.  As a best practice you should run containers with an ID other than 0 (root).
+A Security Context defines priviliges and access control settings for a pod or container.
+- The user ID to run the pod
+- The group ID for filesystem access
+- Granting a process in the container some privs of the root user, but not al of them
+
+PodSecurityContext = pod level
+SecurityContext = container level (take precedence over pod level)
+
+Container level securityContext:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: non-root-pod
+spec:
+  containers:
+  - image: nginx:1.23.0
+    name: secure-container
+    securityContext: 
+      runAsNonRoot: true
+```
+
+Pod level securityContext.   Files created on the filesystem are set as owner group ID 3500 (an arbitrary group ID):
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fs-secure
+spec:
+securityContext: 
+    fsGroup: 3500
+  containers:
+  - image: nginx:1.23.0
+    name: secure-container
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data/app-data
+  volumes:
+  - name: data-volume
+    emptyDir: {}
+    
+```
 
