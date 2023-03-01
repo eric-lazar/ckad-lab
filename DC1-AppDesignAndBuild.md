@@ -139,6 +139,72 @@ metadata:
   name: code-red
 ```
 
+## Labels, Selectors and Annotations
+
+### Labels
+
+
+Difference between Labels and Annontation
+- Labels can be used for querying and selectors.  restricted format
+- Annotations are descriptive metadata, but can't be used for querying or selectors.  Can use more open format
+
+
+Create a new pod with two labels
+```
+$ k run hello-world --image=nginx \
+--restart=Never -labels=tier=backend,env=dev
+```
+
+```
+$ k get pods --show-labels
+$ k get pods -oyaml | grep -C 2 labels:
+```
+
+Set a label on a running pod:
+```
+$ k label pod hello-world color=blue
+$ k label pod hello-world env=inactive --overwrite
+```
+
+Remove a label:
+```
+$ k label pod hello-world color-
+```
+
+### Label Selectors
+
+Equality-based requirement: =, ==, !=.   You can also separate multiple terms with a comma, and combine them with AND
+
+Set-based requirement:  in, notin, exists
+
+
+```
+$ k get pods -l env=prod
+```
+
+example - get pods that match label blue or green, and env = prod
+```
+$ k get pods -l 'color in (blue, green)', env=prod
+```
+
+Label selection in a manifest:
+```
+apiVersion: network.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hello-world-netpol
+spec:
+  podSelector:
+    matchLabels:
+      tier: frontend
+```
+
+### Annotation
+
+
+
+
+
 ## Understand Jobs and CronJobs
 
 Jobs run until completion and then stay around until their spec.ttlSecondsAfterFinished threshold has expired.
@@ -206,6 +272,12 @@ k get cronjobs
 
 minute - hour - dayofmonth - month - dayofweek (0-6, sun-sat)
 
+### Retained Job History
+
+spec.successfulJobsHistoryLimit
+spec.failedJobsHistoryLimit
+
+default is to keep the last 3
 
 
 ## Understand multi-container Pod design patterns (e.g. sidecar, init and others)
