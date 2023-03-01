@@ -141,6 +141,73 @@ metadata:
 
 ## Understand Jobs and CronJobs
 
+Jobs run until completion and then stay around until their spec.ttlSecondsAfterFinished threshold has expired.
+
+Default is to run a single pod once.   That's a "non-parallel" job.
+
+controlled by 
+- spec.template.spec.completions
+- spec.template.spec.parallelism
+
+
+```
+$ k create job counter --image=nginx -- /bin/sh -c 'count=0; \
+while [ $counter -lt 3]; do counter=$((counter+1)); echo "$counter"; \
+sleep 3; done;'
+```
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: counter
+spec:
+  template:
+  spec:
+    containers:
+    - name: counter
+      image: nginx
+      command:
+      - /bin/sh
+      - -c
+      - count=0; while [ $counter -lt 3]; do counter=$((counter+1)); \
+        echo "$counter"; sleep 3; done;
+    restartPolicy: Never
+```
+
+### Job Operation Types
+
+| **Type**                               | **spec.completions** | **spec.parallelism** | **Description**                                                                             |
+|----------------------------------------|----------------------|------------------|-----------------------------------------------------------------------------------------|
+| Non-parallel job with one completion  | 1                    | 1                | Completes as soon as Pod terminates successfully                                              |
+| Parallel with a fixed completion count | >= 1                 | >= 1             | Completes when specified number of tasks finish successfully                            |
+| Parallel with worker queue             | unset                | >= 1             | Completes when at least one Pod has terminated successfully and all Pods are terminated |
+
+### Restart Behavior
+
+spec.backoffLimit - number of retries.  default is 6
+
+Restart Policy - spec.template.spec.restartPolicy
+- Always (default) - tells k8s to restart the job even if it is successful
+- Never - creates new pod
+- OnFailure - restarts current pod
+
+### CronJob
+
+this runs every hour, on the hour:
+```
+$ k create cronjob get-the-date --schedule="0 * * * *" --image=nginx \
+-- /bin/sh -c 'echo "it is now: $(date)"'
+```
+
+```
+k get cronjobs
+```
+
+minute - hour - dayofmonth - month - dayofweek (0-6, sun-sat)
+
+
+
 ## Understand multi-container Pod design patterns (e.g. sidecar, init and others)
 
 ## Utilize persistent and ephemeral volumes

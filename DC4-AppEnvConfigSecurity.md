@@ -4,6 +4,8 @@
 
 ## Understand authentication, authorization and admission control
 
+
+
 ## Understanding and defining resource requirements, limits and quotas
 
 ```
@@ -18,7 +20,7 @@ spec:
     requests.memory: 1024m
     limits.cpu: "4"
     limits.memory: 4096m
-    
+
 ```
 
 
@@ -143,7 +145,7 @@ When you declaritively create a secret via YAML, you have to base64 encode the v
 
 ```
 $ echo -n 'P@ssw0rd^' | base64
-sdsdfsfsad
+UEBzc3cwcmRe
 ```
 
 ```
@@ -153,7 +155,7 @@ metadata:
   name: db-pwd
 type: Opaque
 data:
-  pwd: sdsdfsfsad
+  pwd: UEBzc3cwcmRe
 ```
 
 ### Consume Secret
@@ -195,7 +197,13 @@ spec:
 ```
 
 
-## Understand ServiceAccounts
+## Understand Service Accounts
+
+Pods use a service account to authenticate wih the API server using an authentication token.  A k8s admin assigns rules to a Service Account via RBAC.
+
+If not assigned specifically a pod uses a default Service Account.  The default Service Account has the same permissions as an authenticated user.
+
+
 
 ## Understand SecurityContexts
 

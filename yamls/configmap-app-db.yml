@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  db_url: jdbc:postgresql://localhost/db
+  user: eric
+  
