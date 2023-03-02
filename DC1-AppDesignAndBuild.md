@@ -202,7 +202,49 @@ spec:
 ### Annotation
 
 
+modifying live object:
+```
+$ k annotate pod hello-world release="rel-3-projectname-builddefname"
+$ k annotate pod hello-world release="rel-3-projectname-builddefname" --overwrite
+```
 
+
+remove:
+```
+$ k annotate pod hello-world release-
+```
+
+example manifest:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world
+  labels: 
+    app: hello-world
+    env: prod
+  annotations:
+    commit: '123456abc'
+    contact: 'eric@ericlazar.com'
+    release: 'rel-2-projectname-builddefname'
+    description: "This pod exists to help study for the CKAD exam"
+spec:
+  containers:
+  - name: hello-world
+    image: eric/java-hello-world:1.0.0
+    env:
+    - name: DNS_DOMAIN
+      value: cluster
+    ports: 
+    - containerPort: 8080
+  restartPolicy: Never
+
+```
+
+```
+$ k get pods hello-world -oyaml | grep -C 5 annotations:
+```
 
 
 ## Understand Jobs and CronJobs
