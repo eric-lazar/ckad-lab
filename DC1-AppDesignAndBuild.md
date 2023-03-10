@@ -44,6 +44,13 @@ $ docker push eric/java-hello-world:1.0.0
 ### Create Pods in Kubernetes
 
 
+Create a pod yaml manifest from an image without running it:
+```
+$ kubectl run nginx --image=nginx --restart=Never --dry-run=client -n mynamespace -o yaml > pod.yaml
+```
+dry-run=client just previews a command without actually running it
+
+
 ```
 $ kubectl run java-hello-world --image=eric/java-hello-world:1.0.0 --restart=Never \
 --port=8080 --env="DNS_DOMAIN=cluster" --labels="app=hello-world,env=prod"

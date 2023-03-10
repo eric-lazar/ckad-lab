@@ -86,6 +86,21 @@ autoscaling/v2 support memory and custom metrics
 
 ## Understand Deployments and how to perform rolling updates
 
+
+
+
+### Rollback
+
+```
+$ kubectl rollout history deployment/nginx-deployment
+$ kubectl rollout history deployment/nginx-deployment --revision=2
+$ k rollout undo deploymentname
+$ k rollout undo deploymentname --to-revision=2
+```
+
+
+
+
 ## Use the Helm package manager to deploy existing packages
 
 

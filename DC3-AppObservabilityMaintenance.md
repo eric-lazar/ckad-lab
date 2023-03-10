@@ -58,11 +58,55 @@ spec:
 
 ### Liveness Probe
 
-
+example from kubernetes.io:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: registry.k8s.io/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600       # healthy for first 30 seconds, then unhealthy
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5        # Wait 5 seconds before first attempt
+      periodSeconds: 5              # Check every 5 seconds
+```
 
 ### Startup Probe
 
+Often used for legacy or slow starting applications
 
+```
+ports:
+- name: liveness-port
+  containerPort: 8080
+  hostPort: 8080
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: liveness-port
+  failureThreshold: 1
+  periodSeconds: 10
+
+startupProbe:
+  httpGet:
+    path: /healthz
+    port: liveness-port
+  failureThreshold: 30
+  periodSeconds: 10
+```
 
 
 ## Use provided tools to monitor Kubernetes applications
