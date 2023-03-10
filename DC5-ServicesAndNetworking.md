@@ -36,7 +36,7 @@ spec:
   - Egress
 ```
 
-you can test a network policy by creating an ad hoc container and trying to reach a blocked port:
+You can test a network policy by creating an ad hoc container and trying to reach a blocked port:
 
 ```
 $ k run testcontainer --rm -it image=busybox --restart=Never -- /bin/sh
@@ -46,9 +46,47 @@ $ k run testcontainer --rm -it image=busybox --restart=Never -- /bin/sh
 
 ## Provide and troubleshoot access to applications via services
 
+### Service Types
+
+- ClusterIP - Exposes the Service on a cluster-internal IP.   Only reachable from within the cluster.
+
+- NodePort - Exposes service on worker nodes IP address using a static port.  Accessible from outside the cluster.
+
+- LoadBalancer - Exposes service to an IP that's accessible outside the cluster.
+
+- ExternalName - Maps a service to a DNS name.
 
 
+```
+$ k create service clusterip nginx-service --tcp:80:80
+```
 
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx-service
+  ports:
+  - port: 80
+    targetPort: 80
+```
+
+
+Create a pod and service (clusterIP) with one command:
+```
+$ k run nginx --image=nginx --restart=Never --port=80 --expose
+```
+
+### Proxy
+
+Establish connection to API server via custom port.  THis process will stay running until you break out of it:
+```
+$ k proxy --port=9000
+```
 
 ## Use Ingress rules to expose applications
 
