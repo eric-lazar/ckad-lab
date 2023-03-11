@@ -155,9 +155,151 @@ Each HTTP rule contains the following:
 
 An ingress with no rules sends all traffic to a single default backend, specified in .spec.defaultBackend.  This is typically defined on the Ingress **Controller**.
 
+If none of the hosts or paths match the HTTP request of the Ingress onjects, the traffic goes to default backend.
 
 
 
+### Resource Backend
+
+A Resource Backend is an ObjecRef to another object in the same namespace as the Ingress.
+
+You can't use both Service and Resource
+ 
+A common use case for this is a storage object like an S3 bucket.
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-resource-backend
+spec:
+  defaultBackend:
+    resource:
+      apiGroup: k8s.example.com
+      kind: StorageBucket
+      name: static-assets
+  rules:
+    - http:
+        paths:
+          - path: /icons
+            pathType: ImplementationSpecific
+            backend:
+              resource:
+                apiGroup: k8s.example.com
+                kind: StorageBucket
+                name: icon-assets
+```
+
+### Path Types
+
+
+Each path in an Ingress object needs a path type.  3 supported types:
+- ImplementationSpecific:  Match the IngressClass type
+- Exact: Match the URL exactly (case sensitive)
+- Prefix: Matches based on URL path prefix split by /.  Case Sensitive
+
+If there are multiple matches to different paths, it takes the longest matching path.  If there are still two matches, then exact wins over prefix.
+
+### Hostname Wildcards
+
+Wildcard matches require that the host header is equal to the suffix of the wildcard rule
+
+- wildcard: *.domain.co - host header: domain.com.  doesn't match
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-wildcard-host
+spec:
+  rules:
+  - host: "foo.bar.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/bar"
+        backend:
+          service:
+            name: service1
+            port:
+              number: 80
+  - host: "*.foo.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/foo"
+        backend:
+          service:
+            name: service2
+            port:
+              number: 80
+```
+
+### IngressClass scope
+
+
+Default scope for an IngressClass is cluster-wide
+
+In k8s 1.23 or higher, you can scope an ingress class to a namespace:
+```
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: external-lb-2
+spec:
+  controller: example.com/ingress-controller
+  parameters:
+    # The parameters for this IngressClass are specified in an
+    # IngressParameter (API group k8s.example.com) named "external-config",
+    # that's in the "external-configuration" namespace.
+    scope: Namespace
+    apiGroup: k8s.example.com
+    kind: IngressParameter
+    namespace: external-configuration
+    name: external-config
+```
+
+### TLS
+
+You can secure an ingress with a TLS cert, stored in a secret of type: kubernetes.io/tls
+Must contain tls.crt (public key) and tls.key (private key)
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: testsecret-tls
+  namespace: default
+data:
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+type: kubernetes.io/tls
+```
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-example-ingress
+spec:
+  tls:
+  - hosts:
+      - https-example.foo.com
+    secretName: testsecret-tls
+  rules:
+  - host: https-example.foo.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service1
+            port:
+              number: 80
+```
+
+
+More advanced load balancing concepts (e.g. persistent sessions, dynamic weights) are not yet exposed through the Ingress. You can instead get these features through the load balancer used for a Service.
 
 
 
