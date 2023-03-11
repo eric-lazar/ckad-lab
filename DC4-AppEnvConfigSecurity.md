@@ -2,7 +2,172 @@
 
 ## Discover and use resources that extend Kubernetes (CRD)
 
+CRD = Custom Resource Defintion.  Extensions of the k8s API, that store a collection of API objects.
+
+
+Custom Resources are combined with Custom Controllers
+
+The Operator pattern combines custom resources and custom controllers
+
+CRDs are stored in the API server, so storing too much data there can overwhelm the API server.
+
+
+
+
+
+
 ## Understand authentication, authorization and admission control
+
+[kubernetes.io Doc](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
+
+### API Authentication
+
+Two category of users:   users and service accounts (managed by k8s)
+
+
+Authentication Methods:
+
+- Username.  string which identifies end user. 
+- UID. More unique than a username
+- Groups. set of strings which ident user's membership.
+- Extra Fields.
+
+
+### X509 Client Certs
+
+Client cert authe is enabled by passing the --client-ca-file=FILENAME to the API server.   File much contain CA cert.
+
+This creates CSR for user, with two groups (app1 and app2)
+```
+openssl req -new -key jbeda.pem -out jbeda-csr.pem -subj "/CN=jbeda/O=app1/O=app2"
+```
+
+### Static Token File
+
+---token-auth-file=TOKENFILE
+
+Token file is a CSV file with a minimum of 3 columns:  token, usernane, user uid
+
+```
+token,user,uid,"group1,group2,group3"
+```
+
+Bearer token in request:
+```
+Authorization: Bearer 31ada4fd-adec-460c-809a-9e56ceb75269
+```
+
+Bootstrap token is same format as bearer token
+
+### Service Account Tokens
+
+A service account is an automatically enabled authenticator that uses signed bearer tokens to verify requests
+
+--service-account-key-file - PEM encoded x509 RSA or ECDSA keys.
+
+
+Create service account and token:
+```
+$ k create service account adosvcacct
+$ k create token adosvcaccount
+```
+
+The token created is a signed JSON Web Token (JWT)
+
+
+### OpenID Connecto Tokens
+
+[kuberneter.io Doc](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens)
+
+Used to authenticate to things like Active Directory
+
+example:
+```
+kubectl config set-credentials USER_NAME \
+   --auth-provider=oidc \
+   --auth-provider-arg=idp-issuer-url=( issuer url ) \
+   --auth-provider-arg=client-id=( your client id ) \
+   --auth-provider-arg=client-secret=( your client secret ) \
+   --auth-provider-arg=refresh-token=( your refresh token ) \
+   --auth-provider-arg=idp-certificate-authority=( path to your ca certificate ) \
+   --auth-provider-arg=id-token=( your id_token )
+```
+
+
+Option 1 - OIDC Authenticator
+
+```
+users:
+- name: mmosley
+  user:
+    auth-provider:
+      config:
+        client-id: kubernetes
+        client-secret: 1db158f6-177d-4d9c-8a8b-d36869918ec5
+        id-token: eyJraWQiOiJDTj1vaWRjaWRwLnRyZW1vbG8ubGFuLCBPVT1EZW1vLCBPPVRybWVvbG8gU2VjdXJpdHksIEw9QXJsaW5ndG9uLCBTVD1WaXJnaW5pYSwgQz1VUy1DTj1rdWJlLWNhLTEyMDIxNDc5MjEwMzYwNzMyMTUyIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL29pZGNpZHAudHJlbW9sby5sYW46ODQ0My9hdXRoL2lkcC9P...
+        idp-certificate-authority: /root/ca.pem
+        idp-issuer-url: https://oidcidp.tremolo.lan:8443/auth/idp/OidcIdP
+        refresh-token: q1bKLFOyUiosTfawzA93TzZIDzH2T...
+      name: oidc
+```
+
+Option 2 - use the -token option
+```
+kubectl --token=eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL21sYi50cmVtb2xvLmxhbjo4MDQzL2F1dGgvaWRwL29pZGMiLCJhdWQiOiJrdWJlcm5ldGVzIiwiZXhwIjoxNDc0NTk2NjY5LCJqdGkiOiI2RDUzNXoxUEpFNjJOR3QxaWVyYm9RIiwiaWF0IjoxNDc0NTk2MzY5LCJuYmYiOjE0NzQ1OTYyNDksInN1YiI6Im13aW5kdSIsInVzZXJfc... get nodes
+```
+
+### Webhook Token Auth
+
+Authenticate to a remote webhook service
+
+
+example:
+```
+# Kubernetes API version
+apiVersion: v1
+# kind of the API object
+kind: Config
+# clusters refers to the remote service.
+clusters:
+  - name: name-of-remote-authn-service
+    cluster:
+      certificate-authority: /path/to/ca.pem         # CA for verifying the remote service.
+      server: https://authn.example.com/authenticate # URL of remote service to query. 'https' recommended for production.
+
+# users refers to the API server's webhook configuration.
+users:
+  - name: name-of-api-server
+    user:
+      client-certificate: /path/to/cert.pem # cert for the webhook plugin to use
+      client-key: /path/to/key.pem          # key matching the cert
+
+# kubeconfig files require a context. Provide one for the API server.
+current-context: webhook
+contexts:
+- context:
+    cluster: name-of-remote-authn-service
+    user: name-of-api-server
+  name: webhook
+```
+
+### Authenticating Proxy
+
+[kubernetes.io Doc](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authenticating-proxy)
+
+
+
+
+
+### Authorization Overview
+
+
+[kubernetes.io Doc](https://kubernetes.io/docs/reference/access-authn-authz/authorization/)
+
+k8s authorizes API requests using an API server.  It evaluates request attibutes against all policies and allows or denied the request.
+
+
+When mutliple auth modules are configured, each is checked in sequence.  If any authorizer approves or denies a request, that decision is immediately returned and no other authorizer is consulted.
+If all modules have no opinion, request is denied (403).
 
 
 
