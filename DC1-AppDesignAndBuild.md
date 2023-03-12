@@ -146,9 +146,9 @@ metadata:
   name: code-red
 ```
 
-## Labels, Selectors and Annotations
+### Labels, Selectors and Annotations
 
-### Labels
+#### Labels
 
 
 Difference between Labels and Annontation
@@ -178,7 +178,7 @@ Remove a label:
 $ k label pod hello-world color-
 ```
 
-### Label Selectors
+#### Label Selectors
 
 Equality-based requirement: =, ==, !=.   You can also separate multiple terms with a comma, and combine them with AND
 
@@ -206,7 +206,7 @@ spec:
       tier: frontend
 ```
 
-### Annotation
+#### Annotations
 
 
 modifying live object:
@@ -330,5 +330,40 @@ default is to keep the last 3
 
 
 ## Understand multi-container Pod design patterns (e.g. sidecar, init and others)
+
+
+### Sidecar Pattern
+
+Container that providers helper functionality to the primary app/container.  It's job is to extend functionality of the main container.
+
+Defined as a second container in the delpoyment manifest
+
+can access volumes that the other containers within the pod can access
+
+### Init Containers
+
+Initialization logic to be run before the main application even starts.
+
+In an init container fails, the whole pod is restarted, causing all init containers to run again.
+
+spec.initContainers
+
+
+
+### Adapter Pattern
+
+[kubernetes.io blog](https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns/#example-3-adapter-containers)
+
+Adapter containers standardize and normalize output
+
+
+
+
+### Ambassador Pattern
+
+An container that proxies the network connection to the main container.
+
+The goal it to hide and/or abstract the complexity of interacting with other parts of the system.
+
 
 ## Utilize persistent and ephemeral volumes

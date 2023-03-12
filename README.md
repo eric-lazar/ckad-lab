@@ -5,15 +5,18 @@
 ## Study Guide Breakdown - Domains and Comptenencies*
 *as of 2023-02-27
 
-### 1: [Application Design and Build](DC1-AppDesignAndBuild.md)
+[CKAD Curriculum](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_v1.26.pdf)
 
-### 2: [Application Deployment](DC2-AppDeployment.md)
 
-### 3: [Application Observability and Maintenance](DC3-AppObservabilityMaintenance.md)
+### 1: [Application Design and Build - 20%](DC1-AppDesignAndBuild.md)
 
-### 4: [Application Environment, Configuration and Security](DC4-AppEnvConfigSecurity.md)
+### 2: [Application Deployment - 20%](DC2-AppDeployment.md)
 
-### 5: [Services and Networking](DC5-ServicesAndNetworking.md)
+### 3: [Application Observability and Maintenance - 15%](DC3-AppObservabilityMaintenance.md)
+
+### 4: [Application Environment, Configuration and Security - 25%](DC4-AppEnvConfigSecurity.md)
+
+### 5: [Services and Networking - 20%](DC5-ServicesAndNetworking.md)
 
 
 ## Home Lab Setup
