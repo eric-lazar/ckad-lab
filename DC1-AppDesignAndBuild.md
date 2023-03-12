@@ -367,3 +367,54 @@ The goal it to hide and/or abstract the complexity of interacting with other par
 
 
 ## Utilize persistent and ephemeral volumes
+
+
+### Persistent Volumes
+
+[kubernetes.io Doc](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+
+Two persistent storage resources:
+- PersistentVolume (PV): storage in the cluster that has been provisioned by an admin or dynamically provisioned using Storage Classes.
+- PersistentVolumeClaims (PVC): request for storage by a user.  Can request specific size and access modes (ReadWriteOnce, ReadOnlyMany, ReadWriteMany)
+
+
+#### Lifecycle of a Volume and Claim
+
+- Provisioning
+-- Static
+-- Dynamic - requires DefaultStorageClass admission controller.
+
+- Binding - User creates PVC with a specific amt of storage/access mode.  A control loop in the most watches for new PVCs, finds a matching PV (if possible), and binds them together.  A PVC to PV binding is a 1-to-1 mapping, using a **ClaimRef**.   Claims will remain unbound if a matching volume does not exist.
+
+- Using.  Pods use claims as volumes. Pods access their claimed PVs by including a **persistentVolumeClaim** secion on a Pod's **volumes** block.
+
+- Storagse Object in Use Protection - ensure that PVCs in active use by a Pod and PV are not removed.  If a user deletes a PVC in active use by a pod, the PVC is not removed immediately.  PVC removal is postponed until the PVC is no longer actively used by and Pods.  If an admin deleted a PC that is bound to a PVC, the PV is not removed immeditately.  PV removal is postposed until the PV is no longer bound to a PVC.
+You can see that a PVC is protected when the PVC's status is **Terminating** and the **Finalizers** list includes **kubernetes.io/pvc-protection**
+
+- Reclaiming
+
+- Retain
+
+- Delete
+
+- Recycle
+
+- PersistentVolume deletion protection finalizer
+
+- Reserving a PersistentVolume
+
+- Expanding Persistent Volume Claims
+
+-- Support for PVCs is enabled by default.  k8s 1.24+ (stable)
+-- You can only expand a PVC if its storage class's **allowVolumeExpansion** field is set to true.
+-- To request a larger volume for a PVC, edit the **PVC** object (**not the PV**) and specify a larger size.
+-- You can only resize volumes containing a file system if the file system is XFS, Ext3, Ext4.
+
+
+
+
+
+
+
+
+

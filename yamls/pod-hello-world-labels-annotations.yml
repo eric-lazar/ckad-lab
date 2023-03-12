@@ -12,11 +12,10 @@ metadata:
     description: "This pod exists to help study for the CKAD exam"
 spec:
   containers:
-  - name: hello-world
-    image: eric/java-hello-world:1.0.0
+  - name: nginx-hello-world
+    image: nginx
     env:
     - name: DNS_DOMAIN
       value: cluster
     ports: 
-    - containerPort: 8080
-  restartPolicy: Never
+    - containerPort: 80

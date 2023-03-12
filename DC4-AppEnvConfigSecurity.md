@@ -75,7 +75,7 @@ $ k create token adosvcaccount
 The token created is a signed JSON Web Token (JWT)
 
 
-### OpenID Connecto Tokens
+### OpenID Connect Tokens
 
 [kuberneter.io Doc](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens)
 
@@ -187,6 +187,8 @@ spec:
     limits.memory: 4096m
 
 ```
+
+
 
 
 ## Understand ConfigMaps

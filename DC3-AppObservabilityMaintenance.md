@@ -2,6 +2,21 @@
 
 ## Understand API deprecations
 
+[kubernetes.io Deprecation Policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/)
+
+- Alpha (experimental)
+- Beta (pre-release)
+- GA (generally available)
+
+Rules are enforced between official releases:
+- API elements may only be removed by incrementing the version of the API group.
+- API object must be able to round-trip between API versions in a given release without information loss.  ex:  object can be written in v1 and read in v2
+- An API version in a given track may not be deprecated in favor of a less stable API version
+- API lifetime is determined by the API stability level
+- The "preferred" API version and the "storage version" for a given group may not advance until after a release has been makde that supports both the new version and the previous version.
+
+
+
 ## Implement probes and health checks
 
 - Readiness Probe - is the app ready after it starts?
@@ -110,6 +125,8 @@ startupProbe:
 
 
 ## Use provided tools to monitor Kubernetes applications
+
+
 
 ## Utilize container logs
 
