@@ -18,6 +18,7 @@
 
 ### 5: [Services and Networking - 20%](DC5-ServicesAndNetworking.md)
 
+### 6: [Helm](DC6-Other.md)
 
 ## Home Lab Setup
 

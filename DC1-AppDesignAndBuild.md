@@ -5,7 +5,8 @@
 
 dockerfile:
 
-```FROM openjdk:11-jre-slim
+```
+FROM openjdk:11-jre-slim
 WORKDIR /app
 COPY target/java-hello-world-0.0.1.jar java-hello-world.jar
 ENTRYPOINT ["java", "-jar", "/app/java-hello-world.jar"]
@@ -21,6 +22,7 @@ $ docker images
 ```
 
 This tells docker to forward port 8081 on local host to port 8080 on the docker image:
+local:remote
 
 ```
 $ docker run -d -p 8081:8080 java-hello-world:1.0.0
